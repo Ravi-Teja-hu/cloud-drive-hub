@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, Send, Bot, User } from "lucide-react";
+import { X, Send, Bot, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ReactMarkdown from "react-markdown";
+import chatbotIcon from "@/assets/chatbot-icon.png";
 
 interface Message {
   role: "user" | "assistant";
@@ -131,12 +132,24 @@ const ChatBot = () => {
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:scale-110 transition-transform animate-pulse-glow"
+        className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 group overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%)",
+          boxShadow: "0 0 20px hsl(var(--primary) / 0.5), 0 0 40px hsl(var(--primary) / 0.3), 0 8px 32px rgba(0,0,0,0.3)",
+        }}
       >
+        {/* Animated ring effect */}
+        <span className="absolute inset-0 rounded-full border-2 border-primary/50 animate-ping opacity-75" />
+        <span className="absolute inset-0 rounded-full bg-gradient-to-tr from-white/20 to-transparent" />
+        
         {isOpen ? (
-          <X className="w-6 h-6" />
+          <X className="w-6 h-6 text-primary-foreground relative z-10" />
         ) : (
-          <MessageCircle className="w-6 h-6" />
+          <img 
+            src={chatbotIcon} 
+            alt="AI Assistant" 
+            className="w-12 h-12 object-cover rounded-full relative z-10 group-hover:scale-110 transition-transform duration-300"
+          />
         )}
       </button>
 
