@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Cloud, Mail, Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,14 +19,16 @@ const AuthPage = () => {
   const [fullName, setFullName] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp, user } = useAuth();
+  const [authError, setAuthError] = useState<string | null>(null);
+  const { signIn, signUp, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect if already logged in
-  if (user) {
-    navigate("/");
-    return null;
-  }
+  // Redirect if already logged in - use useEffect to avoid rendering issues
+  useEffect(() => {
+    if (user && !authLoading) {
+      navigate("/", { replace: true });
+    }
+  }, [user, authLoading, navigate]);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -60,22 +62,43 @@ const AuthPage = () => {
     if (!validate()) return;
 
     setLoading(true);
+    setAuthError(null);
+    
     try {
       if (isSignUp) {
         const { error } = await signUp(email, password, fullName);
-        if (!error) {
-          // Stay on page - user needs to verify email
+        if (error) {
+          setAuthError(error.message);
         }
+        // Stay on page - user needs to verify email
       } else {
         const { error } = await signIn(email, password);
-        if (!error) {
-          navigate("/");
+        if (error) {
+          setAuthError(error.message);
+        } else {
+          navigate("/", { replace: true });
         }
       }
+    } catch (err) {
+      setAuthError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+
+  // Show loading while checking auth state
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // Don't render auth form if already logged in
+  if (user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -98,6 +121,12 @@ const AuthPage = () => {
               ? "Sign up to upload and download DevOps materials"
               : "Sign in to access your materials"}
           </p>
+
+          {authError && (
+            <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+              <p className="text-sm text-destructive">{authError}</p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {isSignUp && (
@@ -173,6 +202,7 @@ const AuthPage = () => {
               onClick={() => {
                 setIsSignUp(!isSignUp);
                 setErrors({});
+                setAuthError(null);
               }}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
