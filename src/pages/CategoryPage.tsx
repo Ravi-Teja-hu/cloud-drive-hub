@@ -139,13 +139,35 @@ const CategoryPage = () => {
     }
   };
 
-  const handleDownload = (material: Material) => {
+  const handleDownload = async (material: Material) => {
     if (!user) {
       navigate("/auth");
       return;
     }
     if (material.file_url) {
-      window.open(material.file_url, "_blank");
+      try {
+        const response = await fetch(material.file_url);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = material.file_name || "download";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        toast({
+          title: "Download started",
+          description: `Downloading ${material.file_name}`,
+        });
+      } catch (error) {
+        console.error("Download error:", error);
+        toast({
+          variant: "destructive",
+          title: "Download failed",
+          description: "There was an error downloading the file.",
+        });
+      }
     }
   };
 
