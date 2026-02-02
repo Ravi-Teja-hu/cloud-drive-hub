@@ -27,7 +27,9 @@ const Navbar = () => {
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
               <Cloud className="w-6 h-6 text-primary" />
             </div>
-            <span className="text-xl font-bold text-foreground">CloudRepo</span>
+            <span className="text-xl font-bold text-foreground">
+              <span className="text-red-500">C</span>loud<span className="text-red-500">D</span>rive
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
