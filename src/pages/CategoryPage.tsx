@@ -148,6 +148,21 @@ const CategoryPage = () => {
       try {
         const fileName = material.file_name || "download";
 
+        // Prefer a direct download URL (no async fetch needed).
+        // This avoids browsers blocking programmatic downloads after async work.
+        try {
+          const u = new URL(material.file_url);
+          u.searchParams.set("download", fileName);
+          window.location.assign(u.toString());
+          toast({
+            title: "Download started",
+            description: `Downloading ${fileName}`,
+          });
+          return;
+        } catch {
+          // If URL parsing fails, fall back to blob download below.
+        }
+
         // Robustly extract `bucket/path` from the public URL.
         // Example: .../storage/v1/object/public/materials/<userId>/<file>
         const filePath = (() => {
