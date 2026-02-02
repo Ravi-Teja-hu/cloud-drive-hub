@@ -146,20 +146,40 @@ const CategoryPage = () => {
     }
     if (material.file_url) {
       try {
-        const response = await fetch(material.file_url);
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = material.file_name || "download";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-        toast({
-          title: "Download started",
-          description: `Downloading ${material.file_name}`,
-        });
+        // Extract the file path from the URL
+        const urlParts = material.file_url.split('/storage/v1/object/public/materials/');
+        if (urlParts.length > 1) {
+          const filePath = urlParts[1];
+          
+          // Use Supabase storage download which handles auth properly
+          const { data, error } = await supabase.storage
+            .from('materials')
+            .download(filePath);
+          
+          if (error) throw error;
+          
+          // Create blob URL and trigger download
+          const url = window.URL.createObjectURL(data);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = material.file_name || "download";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+          
+          toast({
+            title: "Download started",
+            description: `Downloading ${material.file_name}`,
+          });
+        } else {
+          // Fallback: open the URL directly
+          window.open(material.file_url, '_blank');
+          toast({
+            title: "Download started",
+            description: `Downloading ${material.file_name}`,
+          });
+        }
       } catch (error) {
         console.error("Download error:", error);
         toast({
