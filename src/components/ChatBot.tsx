@@ -163,7 +163,7 @@ const ChatBot = () => {
             </div>
             <div>
               <h3 className="font-semibold text-foreground text-sm">
-                CloudRepo AI
+                CloudDrive AI
               </h3>
               <p className="text-xs text-muted-foreground">
                 DevOps & Cloud Expert

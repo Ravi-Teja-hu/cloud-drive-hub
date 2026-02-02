@@ -110,7 +110,9 @@ const AuthPage = () => {
             <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
               <Cloud className="w-7 h-7 text-primary" />
             </div>
-            <span className="text-2xl font-bold text-foreground">CloudRepo</span>
+            <span className="text-2xl font-bold text-foreground">
+              <span className="text-red-500">C</span>loud<span className="text-red-500">D</span>rive
+            </span>
           </Link>
 
           <h1 className="text-3xl font-bold text-foreground mb-2">

@@ -33,10 +33,12 @@ const AboutPage = () => {
         <div className="container mx-auto max-w-4xl text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
             About{" "}
-            <span className="text-primary">CloudRepo</span>
+            <span className="text-primary">
+              <span className="text-red-500">C</span>loud<span className="text-red-500">D</span>rive
+            </span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            CloudRepo is your one-stop platform for DevOps and Cloud learning materials.
+            CloudDrive is your one-stop platform for DevOps and Cloud learning materials.
             Upload, share, and download resources to accelerate your career in cloud technologies.
           </p>
         </div>

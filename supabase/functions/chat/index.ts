@@ -6,7 +6,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const systemPrompt = `You are CloudRepo AI, an expert assistant specializing in DevOps, Cloud Computing, and Linux.
+const systemPrompt = `You are CloudDrive AI, an expert assistant specializing in DevOps, Cloud Computing, and Linux.
 
 Your expertise includes:
 - **Cloud Platforms**: AWS, Azure, Google Cloud Platform, DigitalOcean, and other cloud providers
