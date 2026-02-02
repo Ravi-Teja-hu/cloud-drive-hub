@@ -146,40 +146,56 @@ const CategoryPage = () => {
     }
     if (material.file_url) {
       try {
-        // Extract the file path from the URL
-        const urlParts = material.file_url.split('/storage/v1/object/public/materials/');
-        if (urlParts.length > 1) {
-          const filePath = urlParts[1];
-          
-          // Use Supabase storage download which handles auth properly
+        const fileName = material.file_name || "download";
+
+        // Robustly extract `bucket/path` from the public URL.
+        // Example: .../storage/v1/object/public/materials/<userId>/<file>
+        const filePath = (() => {
+          try {
+            const u = new URL(material.file_url);
+            const match = u.pathname.match(
+              /\/storage\/v1\/object\/public\/materials\/(.+)$/
+            );
+            return match?.[1] ? decodeURIComponent(match[1]) : null;
+          } catch {
+            // In case `material.file_url` isn't an absolute URL
+            const match = material.file_url.match(
+              /\/storage\/v1\/object\/public\/materials\/(.+)$/
+            );
+            return match?.[1] ? decodeURIComponent(match[1]) : null;
+          }
+        })();
+
+        let blob: Blob;
+
+        if (filePath) {
+          // Preferred: Storage API download (more reliable than direct fetch)
           const { data, error } = await supabase.storage
-            .from('materials')
+            .from("materials")
             .download(filePath);
-          
           if (error) throw error;
-          
-          // Create blob URL and trigger download
-          const url = window.URL.createObjectURL(data);
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = material.file_name || "download";
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(url);
-          
-          toast({
-            title: "Download started",
-            description: `Downloading ${material.file_name}`,
-          });
+          blob = data;
         } else {
-          // Fallback: open the URL directly
-          window.open(material.file_url, '_blank');
-          toast({
-            title: "Download started",
-            description: `Downloading ${material.file_name}`,
-          });
+          // Fallback: direct fetch of the public URL
+          const response = await fetch(material.file_url);
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          blob = await response.blob();
         }
+
+        // Force browser download (prevents PDF opening in new tab)
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        toast({
+          title: "Download started",
+          description: `Downloading ${fileName}`,
+        });
       } catch (error) {
         console.error("Download error:", error);
         toast({
