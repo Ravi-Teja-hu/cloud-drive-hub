@@ -140,6 +140,9 @@ const CategoryPage = () => {
   };
 
   const handleDownload = async (material: Material) => {
+    const fileName = material.file_name || "download";
+    console.log("DOWNLOAD CLICKED", fileName, material.file_url);
+
     if (!material.file_url) {
       toast({
         variant: "destructive",
@@ -149,56 +152,99 @@ const CategoryPage = () => {
       return;
     }
 
-    const fileName = material.file_name || "download";
-
-    // Show immediate feedback
     toast({
       title: "Preparing download...",
       description: `Getting ${fileName} ready`,
     });
 
+    // Extract the file path from the Storage public URL:
+    // .../storage/v1/object/public/materials/<path>
+    const filePath = (() => {
+      try {
+        const u = new URL(material.file_url);
+        const match = u.pathname.match(/\/storage\/v1\/object\/public\/materials\/(.+)$/);
+        return match?.[1] ? decodeURIComponent(match[1]) : null;
+      } catch {
+        const match = material.file_url.match(/\/storage\/v1\/object\/public\/materials\/(.+)$/);
+        return match?.[1] ? decodeURIComponent(match[1]) : null;
+      }
+    })();
+
+    // Build the final URL we will fetch (forces attachment behavior on public buckets)
+    const directDownloadUrl = (() => {
+      try {
+        const u = new URL(material.file_url);
+        // Official behavior: `?download` forces download; `?download=<name>` suggests filename
+        u.searchParams.set("download", fileName);
+        return u.toString();
+      } catch {
+        // Fallback: if URL is not absolute, keep original
+        return material.file_url;
+      }
+    })();
+
+    console.log("DOWNLOAD final url", directDownloadUrl);
+    console.log("DOWNLOAD storage filePath", filePath);
+
+    const fetchAsBlobOrThrow = async (url: string) => {
+      const res = await fetch(url, { method: "GET" });
+      const contentType = res.headers.get("content-type") || "";
+      console.log("DOWNLOAD HTTP", res.status, contentType);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      // If we accidentally got HTML, it's usually an error page / wrong URL
+      if (contentType.includes("text/html")) {
+        throw new Error("Received HTML instead of file (wrong URL or blocked)");
+      }
+      const blob = await res.blob();
+      if (!blob || blob.size === 0) {
+        throw new Error("Empty file received");
+      }
+      return blob;
+    };
+
     try {
-      // Extract the file path from the Supabase public URL
-      // Example: .../storage/v1/object/public/materials/<userId>/<file>
-      const filePath = (() => {
-        try {
-          const u = new URL(material.file_url);
-          const match = u.pathname.match(
-            /\/storage\/v1\/object\/public\/materials\/(.+)$/
-          );
-          return match?.[1] ? decodeURIComponent(match[1]) : null;
-        } catch {
-          const match = material.file_url.match(
-            /\/storage\/v1\/object\/public\/materials\/(.+)$/
-          );
-          return match?.[1] ? decodeURIComponent(match[1]) : null;
-        }
-      })();
+      let blob: Blob | null = null;
 
-      let blob: Blob;
-
-      if (filePath) {
-        // Use Supabase Storage download API (most reliable)
-        console.log("Downloading via Supabase Storage:", filePath);
-        const { data, error } = await supabase.storage
-          .from("materials")
-          .download(filePath);
-        if (error) {
-          console.error("Supabase download error:", error);
-          throw error;
-        }
-        blob = data;
-      } else {
-        // Fallback: fetch the public URL directly
-        console.log("Downloading via fetch:", material.file_url);
-        const response = await fetch(material.file_url);
-        if (!response.ok) {
-          throw new Error(`HTTP error: ${response.status}`);
-        }
-        blob = await response.blob();
+      // 1) Try direct public download URL (with ?download) first.
+      try {
+        blob = await fetchAsBlobOrThrow(directDownloadUrl);
+      } catch (e) {
+        console.warn("DOWNLOAD direct fetch failed", e);
       }
 
-      // Create object URL and trigger download
+      // 2) If direct URL failed, try SDK download using storage path.
+      if (!blob && filePath) {
+        console.log("DOWNLOAD trying SDK download", filePath);
+        const { data, error } = await supabase.storage.from("materials").download(filePath);
+        if (error) {
+          console.warn("DOWNLOAD SDK download failed", error);
+        } else {
+          blob = data;
+        }
+      }
+
+      // 3) If still failing and we have a path, generate a signed URL (works for private buckets too)
+      if (!blob && filePath) {
+        console.log("DOWNLOAD trying signed url", filePath);
+        const { data, error } = await supabase.storage
+          .from("materials")
+          .createSignedUrl(filePath, 60);
+
+        if (error || !data?.signedUrl) {
+          console.warn("DOWNLOAD signed url failed", error);
+        } else {
+          console.log("DOWNLOAD signed url", data.signedUrl);
+          blob = await fetchAsBlobOrThrow(data.signedUrl);
+        }
+      }
+
+      if (!blob) {
+        throw new Error("Unable to download file (all methods failed)");
+      }
+
+      // Force download via blob URL
       const objectUrl = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = objectUrl;
@@ -206,12 +252,16 @@ const CategoryPage = () => {
       link.style.display = "none";
       document.body.appendChild(link);
       link.click();
-      
-      // Cleanup after a short delay to ensure download starts
+
+      // Cleanup after a delay to avoid revoking before download starts
       setTimeout(() => {
-        document.body.removeChild(link);
+        try {
+          document.body.removeChild(link);
+        } catch {
+          // ignore
+        }
         window.URL.revokeObjectURL(objectUrl);
-      }, 100);
+      }, 1000);
 
       toast({
         title: "Download started",
@@ -222,7 +272,10 @@ const CategoryPage = () => {
       toast({
         variant: "destructive",
         title: "Download failed",
-        description: error instanceof Error ? error.message : "There was an error downloading the file.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "There was an error downloading the file.",
       });
     }
   };
