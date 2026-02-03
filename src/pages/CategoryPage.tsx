@@ -140,10 +140,6 @@ const CategoryPage = () => {
   };
 
   const handleDownload = async (material: Material) => {
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
     if (material.file_url) {
       try {
         const fileName = material.file_name || "download";
