@@ -145,11 +145,23 @@ const CategoryPage = () => {
         const fileName = material.file_name || "download";
 
         // Prefer a direct download URL (no async fetch needed).
-        // This avoids browsers blocking programmatic downloads after async work.
+        // Supabase-style public URLs support `?download` to force the browser
+        // to download instead of opening inline.
+        // Trigger via a real anchor click (more reliable than location.assign).
         try {
           const u = new URL(material.file_url);
+          // Use the official `?download` parameter. If you pass a value, it becomes
+          // the suggested filename. Some browsers/CDNs behave more consistently
+          // when the param exists even if empty.
           u.searchParams.set("download", fileName);
-          window.location.assign(u.toString());
+
+          const a = document.createElement("a");
+          a.href = u.toString();
+          a.rel = "noopener";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+
           toast({
             title: "Download started",
             description: `Downloading ${fileName}`,
