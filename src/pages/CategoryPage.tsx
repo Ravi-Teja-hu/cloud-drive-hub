@@ -140,93 +140,90 @@ const CategoryPage = () => {
   };
 
   const handleDownload = async (material: Material) => {
-    if (material.file_url) {
-      try {
-        const fileName = material.file_name || "download";
+    if (!material.file_url) {
+      toast({
+        variant: "destructive",
+        title: "Download failed",
+        description: "No file URL available.",
+      });
+      return;
+    }
 
-        // Prefer a direct download URL (no async fetch needed).
-        // Supabase-style public URLs support `?download` to force the browser
-        // to download instead of opening inline.
-        // Trigger via a real anchor click (more reliable than location.assign).
+    const fileName = material.file_name || "download";
+
+    // Show immediate feedback
+    toast({
+      title: "Preparing download...",
+      description: `Getting ${fileName} ready`,
+    });
+
+    try {
+      // Extract the file path from the Supabase public URL
+      // Example: .../storage/v1/object/public/materials/<userId>/<file>
+      const filePath = (() => {
         try {
           const u = new URL(material.file_url);
-          // Use the official `?download` parameter. If you pass a value, it becomes
-          // the suggested filename. Some browsers/CDNs behave more consistently
-          // when the param exists even if empty.
-          u.searchParams.set("download", fileName);
-
-          const a = document.createElement("a");
-          a.href = u.toString();
-          a.rel = "noopener";
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-
-          toast({
-            title: "Download started",
-            description: `Downloading ${fileName}`,
-          });
-          return;
+          const match = u.pathname.match(
+            /\/storage\/v1\/object\/public\/materials\/(.+)$/
+          );
+          return match?.[1] ? decodeURIComponent(match[1]) : null;
         } catch {
-          // If URL parsing fails, fall back to blob download below.
+          const match = material.file_url.match(
+            /\/storage\/v1\/object\/public\/materials\/(.+)$/
+          );
+          return match?.[1] ? decodeURIComponent(match[1]) : null;
         }
+      })();
 
-        // Robustly extract `bucket/path` from the public URL.
-        // Example: .../storage/v1/object/public/materials/<userId>/<file>
-        const filePath = (() => {
-          try {
-            const u = new URL(material.file_url);
-            const match = u.pathname.match(
-              /\/storage\/v1\/object\/public\/materials\/(.+)$/
-            );
-            return match?.[1] ? decodeURIComponent(match[1]) : null;
-          } catch {
-            // In case `material.file_url` isn't an absolute URL
-            const match = material.file_url.match(
-              /\/storage\/v1\/object\/public\/materials\/(.+)$/
-            );
-            return match?.[1] ? decodeURIComponent(match[1]) : null;
-          }
-        })();
+      let blob: Blob;
 
-        let blob: Blob;
-
-        if (filePath) {
-          // Preferred: Storage API download (more reliable than direct fetch)
-          const { data, error } = await supabase.storage
-            .from("materials")
-            .download(filePath);
-          if (error) throw error;
-          blob = data;
-        } else {
-          // Fallback: direct fetch of the public URL
-          const response = await fetch(material.file_url);
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          blob = await response.blob();
+      if (filePath) {
+        // Use Supabase Storage download API (most reliable)
+        console.log("Downloading via Supabase Storage:", filePath);
+        const { data, error } = await supabase.storage
+          .from("materials")
+          .download(filePath);
+        if (error) {
+          console.error("Supabase download error:", error);
+          throw error;
         }
-
-        // Force browser download (prevents PDF opening in new tab)
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-
-        toast({
-          title: "Download started",
-          description: `Downloading ${fileName}`,
-        });
-      } catch (error) {
-        console.error("Download error:", error);
-        toast({
-          variant: "destructive",
-          title: "Download failed",
-          description: "There was an error downloading the file.",
-        });
+        blob = data;
+      } else {
+        // Fallback: fetch the public URL directly
+        console.log("Downloading via fetch:", material.file_url);
+        const response = await fetch(material.file_url);
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status}`);
+        }
+        blob = await response.blob();
       }
+
+      // Create object URL and trigger download
+      const objectUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = fileName;
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      
+      // Cleanup after a short delay to ensure download starts
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(objectUrl);
+      }, 100);
+
+      toast({
+        title: "Download started",
+        description: `${fileName} is downloading`,
+      });
+    } catch (error) {
+      console.error("Download error:", error);
+      toast({
+        variant: "destructive",
+        title: "Download failed",
+        description: error instanceof Error ? error.message : "There was an error downloading the file.",
+      });
     }
   };
 
