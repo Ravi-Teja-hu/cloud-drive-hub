@@ -4,33 +4,33 @@
 
 @layer base {
   :root {
-    /* Dark theme base */
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
+    /* Light theme base - Professional colors */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
 
-    --card: 222 47% 8%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 98%;
+    --card-foreground: 222 47% 11%;
 
-    --popover: 222 47% 8%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
 
     --primary: 199 89% 48%;
-    --primary-foreground: 222 47% 6%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 55%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
 
-    --accent: 217 33% 17%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 222 47% 11%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
     --ring: 199 89% 48%;
 
     --radius: 0.75rem;
@@ -47,21 +47,21 @@
     --gradient-cloud: linear-gradient(135deg, hsl(199 89% 48%), hsl(210 100% 60%));
     --gradient-devops: linear-gradient(135deg, hsl(25 95% 53%), hsl(15 85% 60%));
     --gradient-linux: linear-gradient(135deg, hsl(142 71% 45%), hsl(160 60% 50%));
-    --gradient-dark: linear-gradient(180deg, hsl(222 47% 6%), hsl(222 47% 10%));
+    --gradient-dark: linear-gradient(180deg, hsl(0 0% 98%), hsl(220 14% 96%));
     
-    /* Shadows */
-    --shadow-glow-cloud: 0 0 40px hsl(199 89% 48% / 0.3);
-    --shadow-glow-devops: 0 0 40px hsl(25 95% 53% / 0.3);
-    --shadow-glow-linux: 0 0 40px hsl(142 71% 45% / 0.3);
-    --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.4);
+    /* Shadows - lighter for light mode */
+    --shadow-glow-cloud: 0 0 40px hsl(199 89% 48% / 0.2);
+    --shadow-glow-devops: 0 0 40px hsl(25 95% 53% / 0.2);
+    --shadow-glow-linux: 0 0 40px hsl(142 71% 45% / 0.2);
+    --shadow-card: 0 4px 24px hsl(220 13% 91% / 0.8);
 
-    --sidebar-background: 222 47% 8%;
-    --sidebar-foreground: 210 40% 98%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 222 47% 11%;
     --sidebar-primary: 199 89% 48%;
-    --sidebar-primary-foreground: 222 47% 6%;
-    --sidebar-accent: 217 33% 17%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 33% 17%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 220 13% 91%;
     --sidebar-ring: 199 89% 48%;
   }
 
