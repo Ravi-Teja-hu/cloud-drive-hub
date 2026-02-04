@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import MaterialCard from "@/components/MaterialCard";
 import ChatBot from "@/components/ChatBot";
+import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { Cloud, Server, Terminal } from "lucide-react";
 
@@ -101,6 +102,7 @@ const Index = () => {
         </div>
       </section>
 
+      <Footer />
       <ChatBot />
     </div>
   );
