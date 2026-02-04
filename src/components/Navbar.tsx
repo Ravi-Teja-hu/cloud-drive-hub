@@ -1,9 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
-import { Cloud, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import ThemeToggle from "@/components/ThemeToggle";
+import logoImage from "@/assets/logo.png";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,9 +26,11 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-              <Cloud className="w-6 h-6 text-primary" />
-            </div>
+            <img 
+              src={logoImage} 
+              alt="CloudDrive Logo" 
+              className="w-10 h-10 object-contain"
+            />
             <span className="text-xl font-bold text-foreground">
               <span className="text-red-500">C</span>loud<span className="text-red-500">D</span>rive
             </span>
