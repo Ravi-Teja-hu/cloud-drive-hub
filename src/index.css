@@ -150,6 +150,7 @@
     inset: -1px;
     border-radius: inherit;
     padding: 1px;
+    pointer-events: none;
     background: var(--category-gradient);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
