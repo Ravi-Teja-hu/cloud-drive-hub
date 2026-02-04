@@ -3,6 +3,7 @@ import { Cloud, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,8 +50,9 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Auth Buttons */}
+          {/* Theme Toggle & Auth Buttons */}
           <div className="hidden md:flex items-center gap-4">
+            <ThemeToggle />
             {user ? (
               <>
                 <span className="text-sm text-muted-foreground">
@@ -96,6 +98,9 @@ const Navbar = () => {
                   {link.name}
                 </Link>
               ))}
+              <div className="pt-2">
+                <ThemeToggle />
+              </div>
               {user ? (
                 <Button variant="outline" size="sm" onClick={signOut}>
                   Sign Out
