@@ -132,7 +132,7 @@ const ChatBot = () => {
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 w-20 h-20 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 group overflow-hidden animate-bounce-slow"
+        className={`fixed bottom-6 right-6 z-50 w-20 h-20 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 group overflow-hidden ${!isOpen ? 'animate-bounce-slow' : ''}`}
         style={{
           background: "transparent",
         }}
