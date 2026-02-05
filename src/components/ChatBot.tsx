@@ -132,23 +132,26 @@ const ChatBot = () => {
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 group overflow-hidden"
+        className="fixed bottom-6 right-6 z-50 w-20 h-20 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 group overflow-hidden animate-bounce-slow"
         style={{
-          background: "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%)",
-          boxShadow: "0 0 20px hsl(var(--primary) / 0.5), 0 0 40px hsl(var(--primary) / 0.3), 0 8px 32px rgba(0,0,0,0.3)",
+          background: "transparent",
         }}
       >
-        {/* Animated ring effect */}
-        <span className="absolute inset-0 rounded-full border-2 border-primary/50 animate-ping opacity-75" />
-        <span className="absolute inset-0 rounded-full bg-gradient-to-tr from-white/20 to-transparent" />
-        
         {isOpen ? (
-          <X className="w-6 h-6 text-primary-foreground relative z-10" />
+          <div 
+            className="w-full h-full rounded-full flex items-center justify-center"
+            style={{
+              background: "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%)",
+              boxShadow: "0 0 20px hsl(var(--primary) / 0.5), 0 0 40px hsl(var(--primary) / 0.3), 0 8px 32px rgba(0,0,0,0.3)",
+            }}
+          >
+            <X className="w-6 h-6 text-primary-foreground relative z-10" />
+          </div>
         ) : (
           <img 
             src={chatbotIcon} 
             alt="AI Assistant" 
-            className="w-12 h-12 object-cover rounded-full relative z-10 group-hover:scale-110 transition-transform duration-300"
+            className="w-20 h-20 object-contain relative z-10 drop-shadow-2xl"
           />
         )}
       </button>
