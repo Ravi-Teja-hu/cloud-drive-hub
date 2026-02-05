@@ -98,7 +98,7 @@ export default {
         },
         "bounce-slow": {
           "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-4px)" },
+          "50%": { transform: "translateY(-10px)" },
         },
       },
       animation: {
