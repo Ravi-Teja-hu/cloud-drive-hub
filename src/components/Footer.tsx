@@ -14,12 +14,12 @@ const Footer = () => {
     },
     {
       name: "YouTube",
-      href: "https://www.youtube.com/@ravitejadeevela",
+      href: "http://www.youtube.com/@ravitejadeevela",
       icon: Youtube,
     },
     {
       name: "Instagram",
-      href: "https://www.instagram.com/devops_with_ravi",
+      href: "https://www.instagram.com/devops_with_ravi?igsh=Ym13MGs4OGM2Y3E3&utm_source=ig_contact_invite",
       icon: Instagram,
     },
   ];
