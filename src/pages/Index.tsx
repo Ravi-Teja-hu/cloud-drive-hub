@@ -68,10 +68,6 @@ const Index = () => {
       <section className="pt-24 pb-12 px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16 pt-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              <Cloud className="w-4 h-4" />
-              Your DevOps Learning Hub
-            </div>
             <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
               Master{" "}
               <span className="text-primary">
