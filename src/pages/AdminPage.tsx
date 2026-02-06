@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ChatBot from "@/components/ChatBot";
 import adminPhoto from "@/assets/admin-photo.png";
+import { Linkedin, Github } from "lucide-react";
 
 const AdminPage = () => {
   return (
@@ -16,13 +17,35 @@ const AdminPage = () => {
           
           <div className="grid md:grid-cols-2 gap-8 items-start">
             {/* Admin Photo - 4:6 ratio */}
-            <div className="flex justify-center md:justify-start">
+            <div className="flex flex-col items-center md:items-start gap-4">
               <div className="w-full max-w-[320px] aspect-[4/6] overflow-hidden rounded-2xl shadow-2xl border-4 border-primary/20">
                 <img 
                   src={adminPhoto} 
                   alt="CloudDrive Administrator" 
                   className="w-full h-full object-cover object-top"
                 />
+              </div>
+              
+              {/* Social Links */}
+              <div className="flex gap-4">
+                <a 
+                  href="https://www.linkedin.com/in/raviwithai/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-[#0077B5] text-white rounded-lg hover:bg-[#0077B5]/80 transition-colors"
+                >
+                  <Linkedin className="w-5 h-5" />
+                  <span className="font-medium">LinkedIn</span>
+                </a>
+                <a 
+                  href="https://github.com/Ravi-Teja4" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-[#333] text-white rounded-lg hover:bg-[#333]/80 transition-colors"
+                >
+                  <Github className="w-5 h-5" />
+                  <span className="font-medium">GitHub</span>
+                </a>
               </div>
             </div>
             
