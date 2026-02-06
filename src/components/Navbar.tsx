@@ -16,6 +16,7 @@ const Navbar = () => {
     { name: "Cloud", href: "/category/cloud" },
     { name: "DevOps", href: "/category/devops" },
     { name: "Linux", href: "/category/linux" },
+    { name: "Admin", href: "/admin" },
   ];
 
   const isActive = (href: string) => location.pathname === href;
