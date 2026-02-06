@@ -13,6 +13,11 @@ const Index = () => {
     linux: 0,
   });
 
+  const [displayText, setDisplayText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [loopNum, setLoopNum] = useState(0);
+  const phrases = ["Cloud & DevOps", "AWS & Azure", "Docker & K8s", "CI/CD Pipelines"];
+
   useEffect(() => {
     const fetchCounts = async () => {
       const categories = ["cloud", "devops", "linux"] as const;
@@ -32,6 +37,29 @@ const Index = () => {
     fetchCounts();
   }, []);
 
+  useEffect(() => {
+    const currentPhrase = phrases[loopNum % phrases.length];
+    const typingSpeed = isDeleting ? 50 : 100;
+    const pauseTime = isDeleting ? 50 : (displayText === currentPhrase ? 2000 : 100);
+
+    const timer = setTimeout(() => {
+      if (!isDeleting && displayText === currentPhrase) {
+        setTimeout(() => setIsDeleting(true), 2000);
+      } else if (isDeleting && displayText === "") {
+        setIsDeleting(false);
+        setLoopNum(loopNum + 1);
+      } else {
+        setDisplayText(
+          isDeleting
+            ? currentPhrase.substring(0, displayText.length - 1)
+            : currentPhrase.substring(0, displayText.length + 1)
+        );
+      }
+    }, typingSpeed);
+
+    return () => clearTimeout(timer);
+  }, [displayText, isDeleting, loopNum, phrases]);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -45,9 +73,15 @@ const Index = () => {
               Your DevOps Learning Hub
             </div>
             <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
-              Master Cloud & DevOps
+              Master{" "}
+              <span className="text-primary">
+                {displayText}
+                <span className="animate-pulse">|</span>
+              </span>
               <br />
-              <span className="text-primary">One Resource at a Time</span>
+              <span className="text-muted-foreground text-2xl md:text-3xl font-medium">
+                One Resource at a Time
+              </span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Access curated materials for Cloud, DevOps, and Linux. Upload your
