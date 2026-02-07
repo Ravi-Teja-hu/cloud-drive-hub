@@ -46,7 +46,7 @@ const MaterialCard = ({
           alt={categoryLabels[category]}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-card via-card/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-card/30 to-transparent" />
         
 
         {/* Materials Count Badge */}
