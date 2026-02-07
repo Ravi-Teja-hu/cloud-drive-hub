@@ -48,23 +48,6 @@ const MaterialCard = ({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-card via-card/60 to-transparent" />
         
-        {/* Category Badge */}
-        <div className="absolute top-4 left-4">
-          <span
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full backdrop-blur-sm"
-            style={{
-              backgroundColor: `hsl(var(--${category}) / 0.25)`,
-              color: `hsl(var(--${category}))`,
-              border: `1px solid hsl(var(--${category}) / 0.3)`,
-            }}
-          >
-            <span 
-              className="w-2 h-2 rounded-full animate-pulse"
-              style={{ backgroundColor: `hsl(var(--${category}))` }}
-            />
-            {category.toUpperCase()}
-          </span>
-        </div>
 
         {/* Materials Count Badge */}
         <div className="absolute bottom-4 right-4">
