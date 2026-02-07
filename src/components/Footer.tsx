@@ -33,6 +33,7 @@ const Footer = () => {
     { name: "Cloud", href: "/category/cloud" },
     { name: "DevOps", href: "/category/devops" },
     { name: "Linux", href: "/category/linux" },
+    { name: "Tasks", href: "/category/tasks" },
   ];
 
   const legalLinks = [
