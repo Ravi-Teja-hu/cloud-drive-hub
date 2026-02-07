@@ -1,8 +1,34 @@
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import { Link } from "react-router-dom";
 import { Cloud, Server, Terminal, ArrowRight } from "lucide-react";
 
 const AboutPage = () => {
+  const [displayText, setDisplayText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [loopNum, setLoopNum] = useState(0);
+  const brandName = "CloudDrive";
+
+  useEffect(() => {
+    const typingSpeed = isDeleting ? 50 : 100;
+
+    const timer = setTimeout(() => {
+      if (!isDeleting && displayText === brandName) {
+        setTimeout(() => setIsDeleting(true), 2000);
+      } else if (isDeleting && displayText === "") {
+        setIsDeleting(false);
+        setLoopNum(loopNum + 1);
+      } else {
+        setDisplayText(
+          isDeleting
+            ? brandName.substring(0, displayText.length - 1)
+            : brandName.substring(0, displayText.length + 1)
+        );
+      }
+    }, typingSpeed);
+
+    return () => clearTimeout(timer);
+  }, [displayText, isDeleting, loopNum]);
   const features = [
     {
       icon: Cloud,
@@ -34,7 +60,12 @@ const AboutPage = () => {
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
             About{" "}
             <span className="text-primary">
-              <span className="text-red-500">C</span>loud<span className="text-red-500">D</span>rive
+              {displayText.split("").map((char, index) => (
+                <span key={index} className={char === "C" || char === "D" ? "text-red-500" : ""}>
+                  {char}
+                </span>
+              ))}
+              <span className="animate-pulse">|</span>
             </span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
