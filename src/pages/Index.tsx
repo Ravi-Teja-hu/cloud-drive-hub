@@ -121,13 +121,30 @@ const Index = () => {
       {/* Categories Grid */}
       <section className="pb-24 px-4">
         <div className="container mx-auto max-w-6xl">
-          <h2 className="text-2xl font-bold text-foreground mb-8 text-center">
-            Explore Categories
-          </h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            <MaterialCard category="cloud" materialsCount={counts.cloud} />
-            <MaterialCard category="devops" materialsCount={counts.devops} />
-            <MaterialCard category="linux" materialsCount={counts.linux} />
+          {/* Section Header */}
+          <div className="text-center mb-12">
+            <span className="inline-block px-4 py-1.5 mb-4 text-xs font-semibold uppercase tracking-wider text-primary bg-primary/10 rounded-full">
+              Learning Paths
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Explore Categories
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Dive into our curated collection of resources across three core domains
+            </p>
+          </div>
+          
+          {/* Cards Grid */}
+          <div className="grid gap-8 md:grid-cols-3">
+            <div className="animate-fade-in" style={{ animationDelay: "0ms" }}>
+              <MaterialCard category="cloud" materialsCount={counts.cloud} />
+            </div>
+            <div className="animate-fade-in" style={{ animationDelay: "100ms" }}>
+              <MaterialCard category="devops" materialsCount={counts.devops} />
+            </div>
+            <div className="animate-fade-in" style={{ animationDelay: "200ms" }}>
+              <MaterialCard category="linux" materialsCount={counts.linux} />
+            </div>
           </div>
         </div>
       </section>
